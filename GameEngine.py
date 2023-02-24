@@ -1,5 +1,6 @@
 import pygame
 import pytmx
+import os
 
 class Tile(pygame.sprite.Sprite):
     def __init__(self,pos,surf,groups):
@@ -9,7 +10,10 @@ class Tile(pygame.sprite.Sprite):
 
 pygame.init()
 screen = pygame.display.set_mode((1280,920))
-tiled_map = pytmx.util_pygame.load_pygame("GameMap/GameMap.tmx")
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+map_path = os.path.join(script_dir, "GameMap", "GameMap.tmx")
+tiled_map = pytmx.util_pygame.load_pygame(map_path)
 sprite_group = pygame.sprite.Group()
 
 for layer in tiled_map.layers:
