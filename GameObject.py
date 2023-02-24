@@ -1,4 +1,5 @@
 import pygame
+import Box2D
 
 class GameObject:
     def update(self):

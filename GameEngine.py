@@ -1,6 +1,7 @@
 import pygame
 import pytmx
 import os
+import Box2D
 
 class Tile(pygame.sprite.Sprite):
     def __init__(self,pos,surf,groups):
