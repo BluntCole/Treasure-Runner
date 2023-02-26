@@ -1,5 +1,7 @@
 import pygame
 import pytmx
+import os
+import Box2D
 
 class Tile(pygame.sprite.Sprite):
     def __init__(self,pos,surf,groups):
@@ -8,8 +10,11 @@ class Tile(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft = pos)
 
 pygame.init()
-screen = pygame.display.set_mode((1280,920))
-tiled_map = pytmx.util_pygame.load_pygame("GameMap/GameMap.tmx")
+screen = pygame.display.set_mode((1280,620))
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+map_path = os.path.join(script_dir, "GameMap", "GameMap.tmx")
+tiled_map = pytmx.util_pygame.load_pygame(map_path)
 sprite_group = pygame.sprite.Group()
 
 for layer in tiled_map.layers:
@@ -26,7 +31,7 @@ for layer in tiled_map.layers:
 #             screen.blit(tile, (x * tiled_map.tilewidth, y * tiled_map.tileheight))
 
 class GameEngine:
-    def __init__(self, screen_size=(700, 700), fps=30):
+    def __init__(self, screen_size=(600, 600), fps=30):
         pygame.init()
         self.screen = pygame.display.set_mode(screen_size)
         self.clock = pygame.time.Clock()

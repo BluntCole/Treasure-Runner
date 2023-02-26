@@ -3,7 +3,7 @@
  <editorsettings>
   <export target="GameMap..csv" format="csv"/>
  </editorsettings>
- <tileset firstgid="1" source="../../../Users/cdbhu/castle_tileset_part1.tsx"/>
+ <tileset firstgid="1" source="castle_tileset_part1.tsx"/>
  <tileset firstgid="673" source="advnt_full.tsx"/>
  <layer id="1" name="Physical for player and ball" width="50" height="50">
   <data encoding="csv">
