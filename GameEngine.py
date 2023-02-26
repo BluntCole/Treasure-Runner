@@ -13,6 +13,7 @@ tiled_map = pytmx.util_pygame.load_pygame("GameMap/GameMap.tmx")
 sprite_group = pygame.sprite.Group()
 
 for layer in tiled_map.layers:
+    #if layer.name in ('player'):
     if layer.name in ('Physical for player and ball', 'physical for ball', 'physical for player'):
         for x, y, surf in layer.tiles():
             pos = (x * tiled_map.tilewidth, y * tiled_map.tileheight)
@@ -55,12 +56,6 @@ class GameEngine:
                 #game_object.update()
 
             sprite_group.draw(screen)
-                # Draw Tiled map
-            # for layer in self.tiled_map.visible_layers:
-            #     if isinstance(layer, pytmx.TiledTileLayer):
-            #         for x, y, gid in layer:
-            #             tile = self.tiled_map.get_tile_image_by_gid(gid)
-            #             self.screen.blit(tile, (x * self.tiled_map.tilewidth, y * self.tiled_map.tileheight))
 
             # Draw game objects
             #for game_object in self.game_objects:
