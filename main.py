@@ -1,6 +1,6 @@
 from GameEngine import GameEngine
-from GameObject import MyGameObject
+from PlayerObject import PlayerObject
 
 engine = GameEngine()
-engine.add_game_object(MyGameObject())
+#engine.add_game_object(PlayerObject())
 engine.start()
