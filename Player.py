@@ -73,18 +73,25 @@ class Player(pygame.sprite.Sprite):
         # move the player using Box2D physics
         if self.direction == "up":
             self.body.ApplyLinearImpulse = (0, -5)
+            print(self.body.ApplyLinearImpulse)
         elif self.direction == "down":
             self.body.ApplyLinearImpulse = (0, 5)
+            print(self.body.ApplyLinearImpulse)
         elif self.direction == "left":
             self.body.ApplyLinearImpulse = (-5, 0)
+            print(self.body.ApplyLinearImpulse)
         elif self.direction == "right":
             self.body.ApplyLinearImpulse = (5, 0)
+            print(self.body.ApplyLinearImpulse)
 
         # update player position based on Box2D physics
         pos = self.body.position
         self.rect.x = pos.x - self.rect.width / 2
         self.rect.y = pos.y - self.rect.height / 2
 
+    def draw(self, surface):
+        surface.blit(self.image, self.rect)
+        print(self.rect)
 
     def move_up(self):
         self.is_moving = True
@@ -104,4 +111,5 @@ class Player(pygame.sprite.Sprite):
     def stop_moving(self):
         self.is_moving = False
         self.body.ApplyLinearImpulse = (0, 0)
+
 

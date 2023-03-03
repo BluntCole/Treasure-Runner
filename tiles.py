@@ -22,6 +22,5 @@ class Tile(pygame.sprite.Sprite):
 
         # Set the user data for the body to the tile instance
         self.body.userData = self
-
         # Return the Box2D body
         return self.body

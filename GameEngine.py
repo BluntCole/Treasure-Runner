@@ -1,7 +1,7 @@
 import pygame
 import pytmx
 import os
-import Box2D
+from Box2D import *
 from Player import Player
 from tiles import Tile
 
@@ -14,15 +14,19 @@ tiled_map = pytmx.util_pygame.load_pygame(map_path)
 
 tile_group = pygame.sprite.Group()
 
-world = Box2D.b2World(gravity=(0, -10), doSleep=True)
+b2w = 100
+gravity = b2Vec2(0.5, -10.0)
+world = Box2D.b2World(gravity, doSleep=True)
+
 
 for layer in tiled_map.layers:
-    # if layer.name in ('player'):
     if layer.name in ('Physical for player and ball', 'physical for ball', 'physical for player'):
-        for x, y, surf in layer.tiles():
-            pos = (x * tiled_map.tilewidth, y * tiled_map.tileheight)
-            tile = Tile(pos=pos, surf=surf, groups=tile_group, world=world)
-            tile.create_body()
+        for x, y, gid, in layer:
+            if gid > 0:
+                surf = tiled_map.get_tile_image_by_gid(gid)
+                pos = (x * tiled_map.tilewidth, y * tiled_map.tileheight)
+                tile = Tile(pos=pos, surf=surf, groups=tile_group, world=world)
+                tile.create_body()
 
 class GameEngine:
     def __init__(self, screen_size=(600, 600), fps=30):
@@ -36,10 +40,11 @@ class GameEngine:
         self.world = world
         self.done = False
 
-        self.player = Player(x=2000, y=1200,world = self.world, sheet_filename='GameMap/maleBase/maleBase/full/advnt_full.png',
+        self.player = Player(x=2000, y=1200, world = self.world, sheet_filename='GameMap/maleBase/maleBase/full/advnt_full.png',
                         frame_width=32, frame_height=64)
 
         self.add_game_object(self.player)
+
 
 
     def add_game_object(self, game_object):
@@ -53,7 +58,9 @@ class GameEngine:
     def start(self):
         self.running = True
         while self.running:
-            # Handle events
+            # # Handle events
+            # self.rect.center = self.body.position[0] * b2w, 770 - self.body.position[1] * b2w
+            # collided = pygame.sprite.spritecollide(self, tile_group, False)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
@@ -72,10 +79,11 @@ class GameEngine:
 
             self.screen.fill((0, 0, 0))
 
-            self.sprite_group.update(world=self.world)
+            self.player.update(self.world)
             tile_group.draw(screen)
-            self.sprite_group.draw(self.screen)
+            self.player.draw(self.screen)
 
+            print(world.contactListener)
             # Update display
             pygame.display.flip()
 
