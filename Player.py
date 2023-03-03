@@ -1,10 +1,11 @@
 import pygame
-import Box2D
+from Box2D import *
 from tiles import Tile
 
+PPM = 0.1
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y, sheet_filename, frame_width, frame_height):
+    def __init__(self, x, y, world, sheet_filename, frame_width, frame_height):
         super().__init__()
         # load the tiled sheet image
         self.sheet = pygame.image.load(sheet_filename).convert_alpha()
@@ -20,6 +21,7 @@ class Player(pygame.sprite.Sprite):
         # extract the first frame from the tiled sheet
         self.image = self.sheet.subsurface(pygame.Rect(self.frame_x, self.frame_y, self.frame_width, self.frame_height))
         self.rect = self.image.get_rect()
+
         self.rect.x = x
         self.rect.y = y
 
@@ -32,7 +34,28 @@ class Player(pygame.sprite.Sprite):
         self.direction = ""
         self.is_moving = False
 
-    def update(self):
+        self.body = self.create_body(world)
+
+    def create_body(self, world):
+        body_def = b2BodyDef()
+        body_def.type = b2_dynamicBody
+        body_def.position = b2Vec2(self.rect.x * PPM, self.rect.y * PPM)
+
+        body = world.CreateBody(body_def)
+
+        shape = b2PolygonShape()
+        shape.SetAsBox(self.rect.width / 2 * PPM, self.rect.height / 2 * PPM)
+
+        fixture_def = b2FixtureDef()
+        fixture_def.shape = shape
+        fixture_def.density = 1
+        fixture_def.restitution = 0.1
+
+        body.CreateFixture(fixture_def)
+
+        return body
+
+    def update(self, world):
         # increment frame_count and check if it's time to update animation
         if self.is_moving:
             self.frame_count += 1
@@ -47,15 +70,21 @@ class Player(pygame.sprite.Sprite):
                 self.image = self.sheet.subsurface(
                     pygame.Rect(self.frame_x, self.frame_y, self.frame_width, self.frame_height))
 
-        # move the player
+        # move the player using Box2D physics
         if self.direction == "up":
-            self.rect.y -= self.speed
+            self.body.ApplyLinearImpulse = (0, -5)
         elif self.direction == "down":
-            self.rect.y += self.speed
+            self.body.ApplyLinearImpulse = (0, 5)
         elif self.direction == "left":
-            self.rect.x -= self.speed
+            self.body.ApplyLinearImpulse = (-5, 0)
         elif self.direction == "right":
-            self.rect.x += self.speed
+            self.body.ApplyLinearImpulse = (5, 0)
+
+        # update player position based on Box2D physics
+        pos = self.body.position
+        self.rect.x = pos.x - self.rect.width / 2
+        self.rect.y = pos.y - self.rect.height / 2
+
 
     def move_up(self):
         self.is_moving = True
@@ -64,7 +93,6 @@ class Player(pygame.sprite.Sprite):
     def move_down(self):
         self.is_moving = True
         self.direction = "down"
-
     def move_left(self):
         self.is_moving = True
         self.direction = "left"
@@ -75,17 +103,5 @@ class Player(pygame.sprite.Sprite):
 
     def stop_moving(self):
         self.is_moving = False
+        self.body.ApplyLinearImpulse = (0, 0)
 
-    def handle_collision(self, other_sprite):
-        if isinstance(other_sprite,Tile):
-            if other_sprite.tile_type in ["Physical for player and ball", "Physical for player"]:
-                if self.direction == "up":
-                    self.rect.top = other_sprite.rect.bottom
-                elif self.direction == "down":
-                    self.rect.bottom = other_sprite.rect.top
-                elif self.direction == "left":
-                    self.rect.left = other_sprite.rect.right
-                elif self.direction == "right":
-                    self.rect.right = other_sprite.rect.left
-                # stop the player's movement
-                self.stop_moving()
